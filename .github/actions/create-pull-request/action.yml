@@ -2,43 +2,52 @@ name: Create Pull Request
 description: 'Create a pull request'
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
-    - name: Set ENTRY_ID to GitHub Output
-      id: set-entry-id
+    - name: set entry variables
+      id: set-entry-variables
       run: |
-        # Generate a test ENTRY_ID
-        ENTRY_ID="6802418398468691450"
-        echo "Generated ENTRY_ID: $ENTRY_ID"
-        
-        # Set to GITHUB_OUTPUT
-        echo "ENTRY_ID=$ENTRY_ID" >> $GITHUB_OUTPUT
-        echo "Successfully set ENTRY_ID to GITHUB_OUTPUT"
+        echo "ENTRY_ID=6802418398468691450" >> $GITHUB_OUTPUT
       shell: bash
-
-    - name: prepare step
-      id: prepare
-      env:
-        ENTRY_ID: ${{ steps.set-entry-id.outputs.ENTRY_ID }}
+    - name: set owner
+      id: set-owner
       run: |
-        echo "BODY<<EOF" >> $GITHUB_OUTPUT
-        echo "ENTRY_ID=$ENTRY_ID" >> $GITHUB_OUTPUT
+        echo "OWNER_NAME=kimuson" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: get pull request template
+      id: get-pull-request-template
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        pr_template=$(cat<<'EOF'
+        ## test
+
+        - ENTRY_ID: ${{ steps.set-entry-variables.outputs.ENTRY_ID }}
+        - OWNER_NAME: ${{ steps.set-owner.outputs.OWNER_NAME }}
+        
+        EOF
+          )
+        echo "PULL_REQUEST_TEMPLATE<<EOF" >> $GITHUB_OUTPUT
+        echo "$pr_template" >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
       shell: bash
-
-    - name: Reference ENTRY_ID using composite action
-      uses: ./.github/actions/reference-entry
-      with:
-        entry-id: ${{ steps.set-entry-id.outputs.ENTRY_ID }}
-        branch: draft-entry-${{ steps.set-entry-id.outputs.ENTRY_ID }}
-        joined-branch: ${{ format('draft-entry-{0}', steps.set-entry-id.outputs.ENTRY_ID) }}
-        body: ${{ steps.prepare.outputs.BODY }}
-
-    - name: create pull request
+    - name: prepare pull request body
+      id: prepare-pull-request-body
+      env:
+        TITLE: dummy-title
+        ENTRY_ID: ${{ steps.set-entry-variables.outputs.ENTRY_ID }}
+        OWNER_NAME: ${{ steps.set-owner.outputs.OWNER_NAME }}
+        PR_TEMPLATE: ${{ steps.get-pull-request-template.outputs.PULL_REQUEST_TEMPLATE }}
+      run: |
+        echo "PULL_REQUEST_BODY<<EOF" >> $GITHUB_OUTPUT
+        echo "${PR_TEMPLATE}" | envsubst '${TITLE} ${OWNER_NAME} ${ENTRY_ID}' >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: create draft pull request
       uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7
       with:
-        title: draft-entry-${{ steps.set-entry-id.outputs.ENTRY_ID }}
-        branch: draft-entry-${{ steps.set-entry-id.outputs.ENTRY_ID }}
-        body: ${{ steps.prepare.outputs.BODY }}
+        title: dummy-title
+        branch: draft-entry-${{ steps.set-entry-variables.outputs.ENTRY_ID }}
+        body: ${{ steps.prepare-pull-request-body.outputs.PULL_REQUEST_BODY }}
         delete-branch: true
         draft: false
