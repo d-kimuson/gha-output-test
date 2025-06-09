@@ -21,3 +21,4 @@ runs:
         echo "ENTRY_ID: ${{ inputs.entry-id }}"
         echo "BRANCH: ${{ inputs.branch }}"
         echo "JOINED_BRANCH: ${{ inputs.joined-branch }}"
+        echo "BODY: ${{ inputs.body }}"
