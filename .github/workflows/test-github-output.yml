@@ -38,3 +38,12 @@ jobs:
           branch: draft-entry-${{ steps.set-entry-id.outputs.ENTRY_ID }}
           joined-branch: ${{ format('draft-entry-{0}', steps.set-entry-id.outputs.ENTRY_ID) }}
           body: ${{ steps.prepare.outputs.BODY }}
+
+      - name: create pull request
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7
+        with:
+          title: draft-entry-${{ steps.set-entry-id.outputs.ENTRY_ID }}
+          branch: draft-entry-${{ steps.set-entry-id.outputs.ENTRY_ID }}
+          body: ${{ steps.prepare.outputs.BODY }}
+          delete-branch: true
+          draft: false
