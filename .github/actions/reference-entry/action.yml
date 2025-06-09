@@ -11,6 +11,9 @@ inputs:
   joined-branch:
     description: 'The joined branch'
     required: true
+  body:
+    description: 'The body of the entry'
+    required: true
 
 runs:
   using: 'composite'

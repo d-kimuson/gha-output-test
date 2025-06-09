@@ -24,6 +24,8 @@ jobs:
 
       - name: prepare step
         id: prepare
+        env:
+          ENTRY_ID: ${{ steps.set-entry-id.outputs.ENTRY_ID }}
         run: |
           echo "BODY<<EOF" >> $GITHUB_OUTPUT
           echo "ENTRY_ID=$ENTRY_ID" >> $GITHUB_OUTPUT
