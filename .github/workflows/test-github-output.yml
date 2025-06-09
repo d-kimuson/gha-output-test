@@ -15,7 +15,7 @@ jobs:
         id: set-entry-id
         run: |
           # Generate a test ENTRY_ID
-          ENTRY_ID="test-entry-$(date +%s)"
+          ENTRY_ID="6802418398468691450"
           echo "Generated ENTRY_ID: $ENTRY_ID"
           
           # Set to GITHUB_OUTPUT
@@ -26,5 +26,5 @@ jobs:
         uses: ./.github/actions/reference-entry
         with:
           entry-id: ${{ steps.set-entry-id.outputs.ENTRY_ID }}
-          combined-entry-id: prefix-${{ steps.set-entry-id.outputs.ENTRY_ID }}
-          joined-entry-id: ${{ format('prefix-{0}', steps.set-entry-id.outputs.ENTRY_ID) }}
+          branch: draft-entry-${{ steps.set-entry-id.outputs.ENTRY_ID }}
+          joined-branch: ${{ format('draft-entry-{0}', steps.set-entry-id.outputs.ENTRY_ID) }} s
