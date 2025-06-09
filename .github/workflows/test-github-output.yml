@@ -22,13 +22,9 @@ jobs:
           echo "ENTRY_ID=$ENTRY_ID" >> $GITHUB_OUTPUT
           echo "Successfully set ENTRY_ID to GITHUB_OUTPUT"
       
-      - name: Reference ENTRY_ID and create COMBINED_ENTRY_ID
-        id: reference-entry-id
-        env:
-          ENTRY_ID: ${{ steps.set-entry-id.outputs.ENTRY_ID }}
-          COMBINED_ENTRY_ID: prefix-${{ steps.set-entry-id.outputs.ENTRY_ID }}
-          JOINED_ENTRY_ID: ${{ join('prefix-', steps.set-entry-id.outputs.ENTRY_ID) }}
-        run: |
-          echo "ENTRY_ID: $ENTRY_ID"
-          echo "COMBINED_ENTRY_ID: $COMBINED_ENTRY_ID"
-          echo "JOINED_ENTRY_ID: $JOINED_ENTRY_ID"
+      - name: Reference ENTRY_ID using composite action
+        uses: ./.github/actions/reference-entry
+        with:
+          entry-id: ${{ steps.set-entry-id.outputs.ENTRY_ID }}
+          combined-entry-id: prefix-${{ steps.set-entry-id.outputs.ENTRY_ID }}
+          joined-entry-id: ${{ format('prefix-{0}', steps.set-entry-id.outputs.ENTRY_ID) }}

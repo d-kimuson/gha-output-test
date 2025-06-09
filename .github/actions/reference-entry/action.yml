@@ -1,0 +1,23 @@
+name: 'Reference Entry ID'
+description: 'Reference ENTRY_ID and create COMBINED_ENTRY_ID and JOINED_ENTRY_ID'
+
+inputs:
+  entry-id:
+    description: 'The entry ID to reference'
+    required: true
+  combined-entry-id:
+    description: 'The combined entry ID'
+    required: true
+  joined-entry-id:
+    description: 'The joined entry ID'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Reference ENTRY_ID and create COMBINED_ENTRY_ID
+      shell: bash
+      run: |
+        echo "ENTRY_ID: ${{ inputs.entry-id }}"
+        echo "COMBINED_ENTRY_ID: ${{ inputs.combined-entry-id }}"
+        echo "JOINED_ENTRY_ID: ${{ inputs.joined-entry-id }}"
